@@ -19,5 +19,5 @@ for n in s.split(", "):
     xlmr[cat] = int(size)
 
 
-print(sorted(mt5.items(), key=lambda x:x[1], reverse=True))
-print(sorted(xlmr.items(), key=lambda x:x[1], reverse=True))
+print("mt5: ", sorted(mt5.items(), key=lambda x:x[1], reverse=True))
+print("xlm-r: ", sorted(xlmr.items(), key=lambda x:x[1], reverse=True))
