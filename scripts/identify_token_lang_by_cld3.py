@@ -15,4 +15,4 @@ def preprocess(vocab):
 print("Token\tLangID\tConfidence\n")
 for vocab in subset_vocab:
     r = cld3.get_language(preprocess(vocab))
-    print(f"{vocab}\t{r.language}\t{r['probability']:.3f}\n")
+    print(f"{vocab}\t{r.language}\t{r.probability:.3f}\n")
