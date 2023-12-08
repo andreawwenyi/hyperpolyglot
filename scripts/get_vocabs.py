@@ -3,10 +3,10 @@ import sentencepiece
 from collections import Counter
 import numpy as np
 
-#xlm_tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
-#gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
-#bloom_tokenizer = AutoTokenizer.from_pretrained("bigscience/bloom")
-#mt5_tokenizer = AutoTokenizer.from_pretrained("google/mt5-small")
+# xlm_tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
+# gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+# bloom_tokenizer = AutoTokenizer.from_pretrained("bigscience/bloom")
+# mt5_tokenizer = AutoTokenizer.from_pretrained("google/mt5-small")
 stable_tokenizer = AutoTokenizer.from_pretrained("StabilityAI/stablelm-base-alpha-3b")
 
 
@@ -21,32 +21,37 @@ def bytes_to_unicode():
     tables between utf-8 bytes and unicode strings.
     """
     bs = (
-        list(range(ord("!"), ord("~") + 1)) + list(range(ord("¡"), ord("¬") + 1)) + list(range(ord("®"), ord("ÿ") + 1))
+        list(range(ord("!"), ord("~") + 1))
+        + list(range(ord("¡"), ord("¬") + 1))
+        + list(range(ord("®"), ord("ÿ") + 1))
     )
     cs = bs[:]
     n = 0
-    for b in range(2 ** 8):
+    for b in range(2**8):
         if b not in bs:
             bs.append(b)
-            cs.append(2 ** 8 + n)
+            cs.append(2**8 + n)
             n += 1
     cs = [chr(n) for n in cs]
     return dict(zip(bs, cs))
 
+
 def to_unicode(s):
-  try:
-    return bytes([u_to_b[c] for c in s]).decode("utf-8").replace(" ", "▁")
-  except:
-    return "bad: " + s
+    try:
+        return bytes([u_to_b[c] for c in s]).decode("utf-8").replace(" ", "▁")
+    except:
+        return "bad: " + s
+
 
 def convert(vocab_map, unicode=False):
-  vocab_array = np.empty(len(vocab_map), dtype=object)
-  for s, i in vocab_map.items():
-    vocab_array[i] = to_unicode(s) if unicode else s
-  return vocab_array
+    vocab_array = np.empty(len(vocab_map), dtype=object)
+    for s, i in vocab_map.items():
+        vocab_array[i] = to_unicode(s) if unicode else s
+    return vocab_array
+
 
 b_to_u = bytes_to_unicode()
-u_to_b = { c:i for i,c in b_to_u.items() }
+u_to_b = {c: i for i, c in b_to_u.items()}
 
 """
 bloom_vocabulary = convert(bloom_tokenizer.get_vocab(), unicode=True)
@@ -60,4 +65,3 @@ np.save("mt5_vocab.npy", mt5_vocabulary)
 """
 stable_vocabulary = convert(stable_tokenizer.get_vocab(), unicode=True)
 np.save("stable_vocab.npy", stable_vocabulary)
-
