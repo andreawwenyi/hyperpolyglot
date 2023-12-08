@@ -2,12 +2,23 @@ from transformers import AutoTokenizer, AutoModel
 import sentencepiece
 from collections import Counter
 import numpy as np
+import sys
 
-# xlm_tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
-# gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
-# bloom_tokenizer = AutoTokenizer.from_pretrained("bigscience/bloom")
-# mt5_tokenizer = AutoTokenizer.from_pretrained("google/mt5-small")
-stable_tokenizer = AutoTokenizer.from_pretrained("StabilityAI/stablelm-base-alpha-3b")
+model_family = sys.argv[1]
+vocab_file = sys.argv[2]
+
+if model_family == 'xlm':
+    tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
+elif model_family == 'gpt2':
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+elif model_family =='bloom':
+    tokenizer = AutoTokenizer.from_pretrained("bigscience/bloom")
+elif model_family == 'mt5':
+    tokenizer = AutoTokenizer.from_pretrained("google/mt5-small")
+elif model_family =='stable':
+    tokenizer = AutoTokenizer.from_pretrained("StabilityAI/stablelm-base-alpha-3b")
+else: 
+    raise Exception (f"Unknown model_family: {model_family}")
 
 
 def bytes_to_unicode():
@@ -53,15 +64,17 @@ def convert(vocab_map, unicode=False):
 b_to_u = bytes_to_unicode()
 u_to_b = {c: i for i, c in b_to_u.items()}
 
-"""
-bloom_vocabulary = convert(bloom_tokenizer.get_vocab(), unicode=True)
-np.save("bloom_vocab.npy", bloom_vocabulary)
-xlm_vocabulary = convert(xlm_tokenizer.get_vocab())
-np.save("xlm_vocab.npy", xlm_vocabulary)
-gpt2_vocabulary = convert(gpt2_tokenizer.get_vocab(), unicode=True)
-np.save("gpt2_vocab.npy", gpt2_vocabulary)
-mt5_vocabulary = convert(mt5_tokenizer.get_vocab())
-np.save("mt5_vocab.npy", mt5_vocabulary)
-"""
-stable_vocabulary = convert(stable_tokenizer.get_vocab(), unicode=True)
-np.save("stable_vocab.npy", stable_vocabulary)
+if model_family == 'xlm':
+    vocabulary = convert(tokenizer.get_vocab())   
+elif model_family == 'gpt2':
+    vocabulary = convert(tokenizer.get_vocab(), unicode=True)
+elif model_family =='bloom':
+    vocabulary = convert(tokenizer.get_vocab(), unicode=True)
+elif model_family == 'mt5':
+    vocabulary = convert(tokenizer.get_vocab())
+elif model_family =='stable':
+    vocabulary = convert(tokenizer.get_vocab(), unicode=True)
+else: 
+    raise Exception (f"Unknown model_family: {model_family}")
+
+np.save(vocab_file, vocabulary)
